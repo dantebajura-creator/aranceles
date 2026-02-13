@@ -414,9 +414,7 @@
                 <option value="{{ m }}" {% if moneda==m %}selected{% endif %}>{{ m }}</option>
               {% endfor %}
             </select>
-            <span class="hint" id="hint-monedas">
-              {% if monedas %}{{ monedas | join(', ') }}{% endif %}
-            </span>
+            <span class="hint" id="hint-monedas">{% if monedas %}{{ monedas | join(', ') }}{% endif %}</span>
           </div>
 
           <div class="btn-row">
@@ -463,28 +461,45 @@
   </main>
 
   <script>
-    // Mapeo de operacion -> monedas generado por Jinja
-    var monedasPorOp = {{ monedas_por_op | tojson }};
-
-    function actualizarMonedas() {
+    async function actualizarMonedas() {
       var op = document.getElementById('op_abbr').value;
+      var cuenta = document.getElementById('cuenta').value;
       var selMoneda = document.getElementById('moneda');
       var hint = document.getElementById('hint-monedas');
-      var lista = monedasPorOp[op] || [];
 
-      // Limpiar opciones actuales
+      // Resetear moneda
       selMoneda.innerHTML = '<option value="">(Elegi moneda)</option>';
+      if (hint) hint.textContent = '';
 
-      // Agregar las monedas correspondientes
-      for (var i = 0; i < lista.length; i++) {
-        var opt = document.createElement('option');
-        opt.value = lista[i];
-        opt.textContent = lista[i];
-        selMoneda.appendChild(opt);
+      if (!op) return;
+
+      try {
+        // Pedir al servidor las monedas para esta operacion, sin recargar la pagina
+        var formData = new FormData();
+        formData.append('cuenta', cuenta);
+        formData.append('op_abbr', op);
+        formData.append('moneda', '');
+
+        var resp = await fetch('/', { method: 'POST', body: formData });
+        var html = await resp.text();
+
+        // Parsear el HTML de respuesta y extraer las opciones de moneda
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(html, 'text/html');
+        var serverMoneda = doc.getElementById('moneda');
+
+        if (serverMoneda) {
+          selMoneda.innerHTML = serverMoneda.innerHTML;
+        }
+
+        // Actualizar el hint
+        var serverHint = doc.getElementById('hint-monedas');
+        if (serverHint && hint) {
+          hint.textContent = serverHint.textContent;
+        }
+      } catch(e) {
+        console.error('Error actualizando monedas:', e);
       }
-
-      // Actualizar el hint
-      hint.textContent = lista.length ? lista.join(', ') : '';
     }
   </script>
 
