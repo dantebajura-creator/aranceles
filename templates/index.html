@@ -398,7 +398,7 @@
 
           <div class="form-group">
             <label for="op_abbr">Tipo de Operacion</label>
-            <select id="op_abbr" name="op_abbr" onchange="document.getElementById('flag_consultar').value='';document.getElementById('moneda').selectedIndex=0;this.form.submit()">
+            <select id="op_abbr" name="op_abbr" onchange="actualizarMonedas()">
               <option value="">(Elegi una operacion)</option>
               {% for abbr, desc in operaciones %}
                 <option value="{{ abbr }}" {% if op_abbr==abbr %}selected{% endif %}>{{ desc }} ({{ abbr }})</option>
@@ -414,17 +414,18 @@
                 <option value="{{ m }}" {% if moneda==m %}selected{% endif %}>{{ m }}</option>
               {% endfor %}
             </select>
-            <span class="hint">Pesos ($), USD D, USD C</span>
+            <span class="hint" id="hint-monedas">
+              {% if monedas %}{{ monedas | join(', ') }}{% endif %}
+            </span>
           </div>
 
           <div class="btn-row">
-            <button type="submit" class="btn-primary" onclick="document.getElementById('flag_consultar').value='1'">Consultar</button>
+            <button type="submit" class="btn-primary">Consultar</button>
           </div>
 
         </div>
 
         <input type="hidden" name="cuenta" value="{{ cuenta }}">
-        <input type="hidden" id="flag_consultar" name="consultar" value="">
       </form>
     </div>
 
@@ -460,6 +461,32 @@
     </div>
 
   </main>
+
+  <script>
+    // Mapeo de operacion -> monedas generado por Jinja
+    var monedasPorOp = {{ monedas_por_op | tojson }};
+
+    function actualizarMonedas() {
+      var op = document.getElementById('op_abbr').value;
+      var selMoneda = document.getElementById('moneda');
+      var hint = document.getElementById('hint-monedas');
+      var lista = monedasPorOp[op] || [];
+
+      // Limpiar opciones actuales
+      selMoneda.innerHTML = '<option value="">(Elegi moneda)</option>';
+
+      // Agregar las monedas correspondientes
+      for (var i = 0; i < lista.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = lista[i];
+        opt.textContent = lista[i];
+        selMoneda.appendChild(opt);
+      }
+
+      // Actualizar el hint
+      hint.textContent = lista.length ? lista.join(', ') : '';
+    }
+  </script>
 
   <footer class="footer">
     &copy; <script>document.write(new Date().getFullYear())</script> Mills Capital Markets S.A. &mdash; Todos los derechos reservados
