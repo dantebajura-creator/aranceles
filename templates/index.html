@@ -408,7 +408,7 @@
 
           <div class="form-group">
             <label for="moneda">Moneda</label>
-            <select id="moneda" name="moneda" onchange="this.form.submit()">
+            <select id="moneda" name="moneda">
               <option value="">(Elegi moneda)</option>
               {% for m in monedas %}
                 <option value="{{ m }}" {% if moneda==m %}selected{% endif %}>{{ m }}</option>
@@ -418,12 +418,13 @@
           </div>
 
           <div class="btn-row">
-            <button type="submit" class="btn-primary">Consultar</button>
+            <button type="submit" class="btn-primary" onclick="document.getElementById('flag_consultar').value='1'">Consultar</button>
           </div>
 
         </div>
 
         <input type="hidden" name="cuenta" value="{{ cuenta }}">
+        <input type="hidden" id="flag_consultar" name="consultar" value="">
       </form>
     </div>
 
@@ -438,7 +439,6 @@
           <tr>
             <th>Especie</th>
             <th>Arancel (%)</th>
-            <th>Minimo</th>
             <th>Vigencia</th>
           </tr>
         </thead>
@@ -447,7 +447,6 @@
           <tr>
             <td>{{ a["Tipo de Especie"] }}</td>
             <td>{{ a["Arancel (Porcentaje)"] }}</td>
-            <td>{{ a["Arancel (Minimo)"] }}</td>
             <td>{{ a["Fecha de Vigencia"] }}</td>
           </tr>
           {% endfor %}
