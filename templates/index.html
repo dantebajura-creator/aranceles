@@ -342,10 +342,12 @@
         <div class="header-subtitle">MillsApps &middot; Aranceles</div>
       </div>
       <div class="header-actions">
-        <a href="/" class="btn-header">
-          <svg style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-          Recargar
-        </a>
+        <form method="POST" action="/reload-excel" style="display:inline;">
+          <button type="submit" class="btn-header">
+            <svg style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+            Recargar
+          </button>
+        </form>
         <form method="POST" action="/logout" style="display:inline;">
           <button type="submit" class="btn-header btn-header-danger">
             <svg style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
@@ -396,20 +398,20 @@
 
           <div class="form-group">
             <label for="op_abbr">Tipo de Operacion</label>
-            <select id="op_abbr" name="op_abbr">
+            <select id="op_abbr" name="op_abbr" onchange="this.form.submit()">
               <option value="">(Elegi una operacion)</option>
               {% for abbr, desc in operaciones %}
-                <option value="{{ abbr }}" {% if abbr == op_abbr %}selected{% endif %}>{{ desc }} ({{ abbr }})</option>
+                <option value="{{ abbr }}" {% if op_abbr==abbr %}selected{% endif %}>{{ desc }} ({{ abbr }})</option>
               {% endfor %}
             </select>
           </div>
 
           <div class="form-group">
             <label for="moneda">Moneda</label>
-            <select id="moneda" name="moneda">
+            <select id="moneda" name="moneda" onchange="this.form.submit()">
               <option value="">(Elegi moneda)</option>
               {% for m in monedas %}
-                <option value="{{ m }}" {% if m == moneda %}selected{% endif %}>{{ m }}</option>
+                <option value="{{ m }}" {% if moneda==m %}selected{% endif %}>{{ m }}</option>
               {% endfor %}
             </select>
             <span class="hint">Pesos ($), USD D, USD C</span>
@@ -420,6 +422,8 @@
           </div>
 
         </div>
+
+        <input type="hidden" name="cuenta" value="{{ cuenta }}">
       </form>
     </div>
 
