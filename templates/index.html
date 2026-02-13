@@ -398,7 +398,7 @@
 
           <div class="form-group">
             <label for="op_abbr">Tipo de Operacion</label>
-            <select id="op_abbr" name="op_abbr" onchange="document.getElementById('flag_consultar').value='';this.form.submit()">
+            <select id="op_abbr" name="op_abbr" onchange="document.getElementById('flag_consultar').value='';document.getElementById('moneda').selectedIndex=0;this.form.submit()">
               <option value="">(Elegi una operacion)</option>
               {% for abbr, desc in operaciones %}
                 <option value="{{ abbr }}" {% if op_abbr==abbr %}selected{% endif %}>{{ desc }} ({{ abbr }})</option>
